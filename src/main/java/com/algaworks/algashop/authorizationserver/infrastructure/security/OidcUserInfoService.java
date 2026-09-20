@@ -7,8 +7,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
 @Service
 @RequiredArgsConstructor
 public class OidcUserInfoService {
@@ -24,7 +22,7 @@ public class OidcUserInfoService {
                 .name(authUser.getName())
                 .email(authUser.getEmail())
                 .claim("type", authUser.getType().name())
-                .claim("created_at", authUser.getCreatedAt().toEpochSecond())
+                .claim("created_at", String.valueOf(authUser.getCreatedAt().toEpochSecond()))
                 .build();
     }
 }

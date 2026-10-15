@@ -31,7 +31,12 @@ public class OAuth2SecurityCheckApplicationServiceImpl implements SecurityCheckA
 
     @Override
     public boolean isAuthenticated() {
-        return this.getAuthentication().isAuthenticated();
+        try {
+            return this.getAuthentication().isAuthenticated();
+        } catch (IllegalStateException e) {
+            log.debug("No authentication found in the security context", e);
+            return false;
+        }
     }
 
     private Authentication getAuthentication() {
@@ -44,7 +49,13 @@ public class OAuth2SecurityCheckApplicationServiceImpl implements SecurityCheckA
 
     @Override
     public boolean isMachineAuthenticated() {
-        Jwt jwt = this.getJwt();
+        Jwt jwt;
+        try {
+            jwt = this.getJwt();
+        } catch (IllegalStateException e) {
+            log.debug("No JWT found in the authentication principal", e);
+            return false;
+        }
         return jwt.getAudience().contains(jwt.getSubject());
     }
 

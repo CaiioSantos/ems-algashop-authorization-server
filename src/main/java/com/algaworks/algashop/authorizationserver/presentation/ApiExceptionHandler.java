@@ -2,6 +2,7 @@ package com.algaworks.algashop.authorizationserver.presentation;
 
 
 import com.algaworks.algashop.authorizationserver.application.user.management.AuthUserEmailAlreadyInUseException;
+import com.algaworks.algashop.authorizationserver.application.user.query.AuthUserNotFoundException;
 import com.algaworks.algashop.authorizationserver.domain.model.DomainException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +81,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setTitle("Uniprocessable entity");
         problemDetail.setDetail(e.getMessage());
         problemDetail.setType(URI.create("/errors/unprocessable-entity"));
+        return problemDetail;
+    }
+
+    @ExceptionHandler(AuthUserNotFoundException.class)
+    public ProblemDetail handleAuthUserNotFoundException(AuthUserNotFoundException e ) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problemDetail.setTitle("User not found");
+        problemDetail.setDetail(e.getMessage());
+        problemDetail.setType(URI.create("/errors/user-not-found"));
         return problemDetail;
     }
 

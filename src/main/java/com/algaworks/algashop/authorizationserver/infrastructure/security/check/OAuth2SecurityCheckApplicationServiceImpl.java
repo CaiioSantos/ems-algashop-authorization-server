@@ -1,0 +1,59 @@
+package com.algaworks.algashop.authorizationserver.infrastructure.security.check;
+
+import com.algaworks.algashop.authorizationserver.application.security.SecurityCheckApplicationService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Service;
+
+
+import java.util.UUID;
+
+@Slf4j
+@Service
+public class OAuth2SecurityCheckApplicationServiceImpl implements SecurityCheckApplicationService {
+
+    @Override
+    public UUID getAuthenticatedUserId() {
+        if (isMachineAuthenticated()) {
+            throw new AccessDeniedException("Machine-to-machine authentication does not have a user ID");
+        }
+        Jwt jwt = this.getJwt();
+        try {
+            return UUID.fromString(jwt.getSubject());
+        } catch (IllegalAccessError e) {
+            log.error("Invalid user ID format: {}", jwt.getSubject(), e);
+            throw new AccessDeniedException("Invalid user ID format");
+        }
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        return this.getAuthentication().isAuthenticated();
+    }
+
+    private Authentication getAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            throw new IllegalStateException("No authentication found in the security context");
+        }
+        return authentication;
+    }
+
+    @Override
+    public boolean isMachineAuthenticated() {
+        Jwt jwt = this.getJwt();
+        return jwt.getAudience().contains(jwt.getSubject());
+    }
+
+    private Jwt getJwt() {
+        Authentication authentication = this.getAuthentication();
+        if (authentication.getPrincipal() instanceof Jwt jwt) {
+            jwt.getAudience().contains(jwt.getSubject());
+            return jwt;
+        }
+        throw new IllegalStateException("Authentication principal is not a Jwt");
+    }
+}

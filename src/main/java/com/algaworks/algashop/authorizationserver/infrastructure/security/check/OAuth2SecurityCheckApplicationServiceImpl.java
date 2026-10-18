@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Slf4j
-@Service
+@Service(value = "securityCheck")
 public class OAuth2SecurityCheckApplicationServiceImpl implements SecurityCheckApplicationService {
 
     @Override
@@ -66,5 +66,10 @@ public class OAuth2SecurityCheckApplicationServiceImpl implements SecurityCheckA
             return jwt;
         }
         throw new IllegalStateException("Authentication principal is not a Jwt");
+    }
+
+    @Override
+    public boolean canAccessOwnProfile() {
+        return this.isAuthenticated() && !this.isMachineAuthenticated();
     }
 }

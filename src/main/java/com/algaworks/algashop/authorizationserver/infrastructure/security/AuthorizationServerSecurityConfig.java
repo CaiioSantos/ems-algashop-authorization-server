@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
@@ -16,6 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
+
+@EnableMethodSecurity
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -30,18 +33,18 @@ public class AuthorizationServerSecurityConfig {
         OAuth2AuthorizationServerConfigurer serverConfigurer = new OAuth2AuthorizationServerConfigurer();
 
 
-            http.securityMatcher(serverConfigurer.getEndpointsMatcher())
-                    .with(serverConfigurer, configurer -> {
-                        configurer.oidc(oidc -> oidc
-                                .logoutEndpoint(logout -> logout.logoutResponseHandler(oidcLogoutAuthenticationSuccessHandler))
-                                .userInfoEndpoint(
-                                        userInfo -> userInfo.userInfoMapper(userInfoMapper)));
-                    })
-                    .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
-                    .exceptionHandling(exceptions -> exceptions.defaultAuthenticationEntryPointFor(
-                            new LoginUrlAuthenticationEntryPoint("/login"),
-                            new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-                    ));
+        http.securityMatcher(serverConfigurer.getEndpointsMatcher())
+                .with(serverConfigurer, configurer -> {
+                    configurer.oidc(oidc -> oidc
+                            .logoutEndpoint(logout -> logout.logoutResponseHandler(oidcLogoutAuthenticationSuccessHandler))
+                            .userInfoEndpoint(
+                                    userInfo -> userInfo.userInfoMapper(userInfoMapper)));
+                })
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+                .exceptionHandling(exceptions -> exceptions.defaultAuthenticationEntryPointFor(
+                        new LoginUrlAuthenticationEntryPoint("/login"),
+                        new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                ));
         return http.build();
     }
 
@@ -68,3 +71,6 @@ public class AuthorizationServerSecurityConfig {
         return http.build();
     }
 }
+
+
+

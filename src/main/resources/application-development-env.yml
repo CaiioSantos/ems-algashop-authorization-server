@@ -1,7 +1,6 @@
 spring:
   session:
     store-type: jdbc
-    timeout: 30m
   datasource:
     url: jdbc:postgresql://localhost:5432/authorization_server
     username: postgres
@@ -39,13 +38,12 @@ spring:
                 - credit-cards:write
                 - orders:read
                 - orders:write
-                - users:read
-                - users:write
                 - customers:read
                 - customers:write
                 - shopping-carts:read
                 - shopping-carts:write
-                - openid
+                - users:read
+                - users:write
             token:
               access-token-time-to-live: 15m
               access-token-format: self-contained # JWT
@@ -66,7 +64,7 @@ spring:
             registration:
               client-id: algashop-ecommerce-web
               client-secret: "{noop}ecommerce123"
-              client-name: Algashop Ecommerce
+              client-name: AlgaShop Ecommerce
               authorization-grant-types:
                 - authorization_code
                 - refresh_token
@@ -80,17 +78,15 @@ spring:
               scopes:
                 - credit-cards:read
                 - credit-cards:write
-                - customers:read
-                - customers:write
                 - orders:read
                 - orders:write
-                - users:read
-                - users:write
+                - customers:read
+                - customers:write
                 - shopping-carts:read
                 - shopping-carts:write
                 - openid
             require-authorization-consent: true
-            require-proof-key: false # PKCE is not required for confidential clients
+            require-proof-key: false #PKCE
             token:
               access-token-time-to-live: 5m
               authorization-code-time-to-live: 10m
@@ -141,6 +137,7 @@ spring:
             token:
               access-token-time-to-live: 5m
               authorization-code-time-to-live: 2m
+
 algashop:
   security:
     cors:

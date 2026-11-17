@@ -1,6 +1,7 @@
 package com.algaworks.algashop.authorizationserver.infrastructure.security.cors;
 
 import com.algaworks.algashop.authorizationserver.infrastructure.security.AlgashopSecurityProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 @Configuration
 public class CorsConfig {
 
+    @Bean
     public CorsConfigurationSource corsConfigurationSource(AlgashopSecurityProperties properties) {
         CorsConfiguration cors = new CorsConfiguration();
         cors.setAllowedOrigins(properties.getCors().getAllowedOrigins());

@@ -26,6 +26,7 @@ public class AuthorizationServerSecurityConfig {
 
     private final OidcUserInfoMapper userInfoMapper;
     private final OidcLogoutAuthenticationSuccessHandler oidcLogoutAuthenticationSuccessHandler;
+    private final AlgashopSecurityProperties algashopSecurityProperties;
 
     @Bean
     @Order(1)
@@ -35,6 +36,10 @@ public class AuthorizationServerSecurityConfig {
 
         http.securityMatcher(serverConfigurer.getEndpointsMatcher())
                 .cors(Customizer.withDefaults())
+                .headers(headers -> {
+                    var csp =  algashopSecurityProperties.getCsp();
+                    headers.contentSecurityPolicy(c -> c.policyDirectives(csp.getPolicyDirectives()));
+                })
                 .with(serverConfigurer, configurer -> {
                     configurer.oidc(oidc -> oidc
                             .logoutEndpoint(logout -> logout.logoutResponseHandler(oidcLogoutAuthenticationSuccessHandler))
